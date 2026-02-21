@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { createTicket, getMyTickets } = require('../controllers/ticketController');
+const { createTicket, getMyTickets, getTickets } = require('../controllers/ticketController');
 const { protect } = require('../middleware/authMiddleware');
+const { admin } = require('../middleware/adminMiddleware');
 
-router.post('/', createTicket);
+router.route('/')
+    .get(protect, admin, getTickets)
+    .post(createTicket);
+
 router.get('/mytickets', protect, getMyTickets);
-router.get('/', (req, res) => res.send('Ticket API is reachable via POST'));
 
 
 

@@ -84,10 +84,23 @@ const deleteBooking = async (req, res) => {
     }
 };
 
+// @desc    Get all bookings
+// @route   GET /api/bookings
+// @access  Private/Admin
+const getBookings = async (req, res) => {
+    try {
+        const bookings = await Booking.find({}).populate('user', 'username email').populate('tour');
+        res.json(bookings);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     addBooking,
     getMyBookings,
     updateBooking,
-    deleteBooking
+    deleteBooking,
+    getBookings
 };
 

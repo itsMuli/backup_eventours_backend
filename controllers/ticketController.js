@@ -52,5 +52,17 @@ const getMyTickets = async (req, res) => {
     }
 };
 
-module.exports = { createTicket, getMyTickets };
+// @desc    Get all tickets
+// @route   GET /api/tickets
+// @access  Private/Admin
+const getTickets = async (req, res) => {
+    try {
+        const tickets = await Ticket.find({}).sort({ createdAt: -1 });
+        res.json(tickets);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { createTicket, getMyTickets, getTickets };
 
