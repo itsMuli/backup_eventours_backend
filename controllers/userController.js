@@ -25,7 +25,8 @@ const registerUser = async (req, res) => {
                 _id: user._id,
                 username: user.username,
                 email: user.email,
-                token: generateToken(user._id)
+                role: user.role,
+                token: generateToken(user._id, user.role)
             });
         } else {
             res.status(400).json({ message: 'Invalid user data' });
@@ -49,7 +50,8 @@ const authUser = async (req, res) => {
                 _id: user._id,
                 username: user.username,
                 email: user.email,
-                token: generateToken(user._id)
+                role: user.role,
+                token: generateToken(user._id, user.role)
             });
         } else {
             res.status(401).json({ message: 'Invalid email or password' });
@@ -60,8 +62,8 @@ const authUser = async (req, res) => {
 };
 
 // Generate JWT
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (id, role) => {
+    return jwt.sign({ id, role }, process.env.JWT_SECRET, {
         expiresIn: '30d'
     });
 };

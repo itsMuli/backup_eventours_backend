@@ -47,8 +47,45 @@ const createTour = async (req, res) => {
     }
 };
 
+// @desc    Update a tour
+// @route   PUT /api/tours/:id
+// @access  Private/Admin
+const updateTour = async (req, res) => {
+    try {
+        const tour = await Tour.findById(req.params.id);
+        if (tour) {
+            Object.assign(tour, req.body);
+            const updatedTour = await tour.save();
+            res.json(updatedTour);
+        } else {
+            res.status(404).json({ message: 'Tour not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Delete a tour
+// @route   DELETE /api/tours/:id
+// @access  Private/Admin
+const deleteTour = async (req, res) => {
+    try {
+        const tour = await Tour.findById(req.params.id);
+        if (tour) {
+            await tour.deleteOne();
+            res.json({ message: 'Tour removed' });
+        } else {
+            res.status(404).json({ message: 'Tour not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getTours,
     getTourById,
-    createTour
+    createTour,
+    updateTour,
+    deleteTour
 };

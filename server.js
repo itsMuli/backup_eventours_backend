@@ -8,8 +8,10 @@ const connectDB = require('./config/db');
 // Load env vars
 dotenv.config();
 
-// Connect to database
-connectDB();
+// Connect to database and seed
+connectDB().then(() => {
+    seedTours();
+});
 
 const app = express();
 
@@ -53,13 +55,25 @@ const seedTours = async () => {
             await Tour.insertMany(tours);
             console.log('Database seeded with original tour packages!');
         }
+
+        const User = require('./models/User');
+        const userCount = await User.countDocuments();
+        if (userCount === 0) {
+            // Note: Password will be hashed by pre-save hook
+            await User.create({
+                username: 'admin',
+                email: 'admin@eventours.com',
+                password: 'adminpassword123',
+                role: 'admin'
+            });
+            console.log('Admin user seeded: admin@eventours.com / adminpassword123');
+        }
     } catch (err) {
         console.error('Auto-seeding error:', err);
     }
 };
 
-// Seed database
-seedTours();
+// Seed database - handled in connectDB promise
 
 app.get('/', (req, res) => {
     res.send('API is running and seeded...');
