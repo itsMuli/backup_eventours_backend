@@ -57,16 +57,23 @@ const seedTours = async () => {
         }
 
         const User = require('./models/User');
-        const userCount = await User.countDocuments();
-        if (userCount === 0) {
-            // Note: Password will be hashed by pre-save hook
+        const adminEmail = 'admin@eventours.com';
+        let adminUser = await User.findOne({ email: adminEmail });
+
+        if (!adminUser) {
             await User.create({
                 username: 'admin',
-                email: 'admin@eventours.com',
+                email: adminEmail,
                 password: 'adminpassword123',
                 role: 'admin'
             });
-            console.log('Admin user seeded: admin@eventours.com / adminpassword123');
+            console.log('Admin user created: admin@eventours.com / adminpassword123');
+        } else {
+            // Force reset password to ensure it matches current hashing
+            adminUser.password = 'adminpassword123';
+            adminUser.role = 'admin';
+            await adminUser.save();
+            console.log('Admin password refreshed to: adminpassword123');
         }
     } catch (err) {
         console.error('Auto-seeding error:', err);
